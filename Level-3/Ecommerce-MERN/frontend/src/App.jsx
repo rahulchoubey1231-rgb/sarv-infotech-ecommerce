@@ -8,6 +8,9 @@ import CartDrawer from './components/CartDrawer';
 import QuickViewModal from './components/QuickViewModal';
 import AdminView from './components/AdminView';
 
+// Live Production Render Backend API URL
+const API_BASE_URL = 'https://sarv-infotech-ecommerce.onrender.com/api';
+
 function App() {
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -84,7 +87,7 @@ function App() {
 
   const fetchProducts = () => {
     setLoading(true);
-    axios.get('http://localhost:5000/api/products')
+    axios.get(`${API_BASE_URL}/products`)
       .then(response => {
         setProducts(response.data);
         setLoading(false);
@@ -98,7 +101,7 @@ function App() {
 
   const fetchOrders = () => {
     setLoading(true);
-    axios.get('http://localhost:5000/api/orders')
+    axios.get(`${API_BASE_URL}/orders`)
       .then(response => {
         setOrders(response.data);
         setLoading(false);
@@ -127,7 +130,7 @@ function App() {
     const endpoint = authTab === 'login' ? '/login' : '/signup';
 
     try {
-      const res = await axios.post(`http://localhost:5000/api/auth${endpoint}`, authForm);
+      const res = await axios.post(`${API_BASE_URL}/auth${endpoint}`, authForm);
       localStorage.setItem('nexstore_token', res.data.token);
       localStorage.setItem('nexstore_user', JSON.stringify(res.data.user));
       setCurrentUser(res.data.user);
@@ -261,7 +264,7 @@ function App() {
     };
 
     try {
-      const res = await axios.post('http://localhost:5000/api/orders/verify-and-save', orderPayload);
+      const res = await axios.post(`${API_BASE_URL}/orders/verify-and-save`, orderPayload);
       setCart([]);
       setIsPaymentGatewayOpen(false);
       if (!currentUser) setFormData({ name: '', phone: '', address: '' });
@@ -278,7 +281,7 @@ function App() {
     setAddingProduct(true);
 
     try {
-      await axios.post('http://localhost:5000/api/products', productForm);
+      await axios.post(`${API_BASE_URL}/products`, productForm);
       setProductForm({ name: '', price: '', category: '', image: '', description: '' });
       setShowAddProductForm(false);
       showToast('New product added to catalog', 'success');
@@ -292,7 +295,7 @@ function App() {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      await axios.patch(`http://localhost:5000/api/orders/${orderId}/status`, { status: newStatus });
+      await axios.patch(`${API_BASE_URL}/orders/${orderId}/status`, { status: newStatus });
       setOrders(orders.map(ord => ord._id === orderId ? { ...ord, status: newStatus } : ord));
       showToast(`Order status updated to ${newStatus}`, 'info');
     } catch (err) {
@@ -307,7 +310,7 @@ function App() {
       message: 'Are you sure you want to permanently delete this order?',
       onConfirm: async () => {
         try {
-          await axios.delete(`http://localhost:5000/api/orders/${orderId}`);
+          await axios.delete(`${API_BASE_URL}/orders/${orderId}`);
           setOrders(orders.filter(ord => ord._id !== orderId));
           showToast('Order record deleted', 'info');
         } catch (err) {
@@ -325,7 +328,7 @@ function App() {
       message: 'Are you sure you want to remove this product from the store?',
       onConfirm: async () => {
         try {
-          await axios.delete(`http://localhost:5000/api/products/${productId}`);
+          await axios.delete(`${API_BASE_URL}/products/${productId}`);
           setProducts(products.filter(p => p._id !== productId));
           showToast('Product removed from catalog', 'info');
         } catch (err) {
@@ -381,8 +384,8 @@ function App() {
 
               <div className="category-filters">
                 {categories.map(cat => (
-                  <button
-                    key={cat}
+                  <button 
+                    key={cat} 
                     className={`filter-btn ${selectedCategory === cat ? 'active' : ''}`}
                     onClick={() => setSelectedCategory(cat)}
                   >
@@ -686,7 +689,7 @@ function App() {
             <div className="pg-header">
               <div className="pg-brand">
                 <span>Secure Checkout</span>
-                <span>Rahul Chart Gateway</span>
+                <span>Rahul Store Gateway</span>
               </div>
               <div className="pg-amount">
                 ₹{totalAmount}
