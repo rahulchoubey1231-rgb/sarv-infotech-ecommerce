@@ -1173,3 +1173,20 @@ body {
   color: #2563eb;
   border-bottom-color: #2563eb;
 }
+
+/* Mobile screens ke liye */
+@media (max-width: 768px) {
+  .products-grid {
+    grid-template-columns: 1fr; /* Mobile par ek line mein 1 product */
+    gap: 16px;
+  }
+
+  .navbar {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .search-box {
+    width: 100%; /* Search bar poori width cover kare */
+  }
+}
